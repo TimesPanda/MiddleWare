@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class RedPacketController {
@@ -46,6 +43,19 @@ public class RedPacketController {
             logger.error("发红包异常：dto={}",dto,e.fillInStackTrace());
             response = new BaseResponse(StatusCode.Fail.getCode(),e.getMessage());
         }
+        return response;
+    }
+
+    /**
+     * 处理抢红包请求：接收当前用户账户ID和红包全局唯一标识串参数
+     * @param userId
+     * @param redId
+     * @return
+     */
+    @RequestMapping(value= prefix + "/rob",method = RequestMethod.GET)
+    public BaseResponse rob(@RequestParam Integer userId,@RequestParam String redId){
+        //定义响应对象
+        BaseResponse response = new BaseResponse(StatusCode.Success);
         return response;
     }
 }
