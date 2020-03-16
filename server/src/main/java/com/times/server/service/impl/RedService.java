@@ -2,6 +2,7 @@ package com.times.server.service.impl;
 
 import com.times.model.entity.RedDetail;
 import com.times.model.entity.RedRecord;
+import com.times.model.entity.RedRobRecord;
 import com.times.model.mapper.RedDetailMapper;
 import com.times.model.mapper.RedRecordMapper;
 import com.times.model.mapper.RedRobRecordMapper;
@@ -68,8 +69,23 @@ public class RedService implements IRedService {
         }
     }
 
+    /**
+     * 成功抢到红包时将当前用户账户信息及对应的红包金额等信息记入数据库中
+     * @param userId 用户账户ID
+     * @param redId  红包全局唯一标识串
+     * @param amount 抢到的红包金额
+     * @throws Exception
+     */
     @Override
+    @Async
     public void recordRedPacket(Integer userId, String redId, BigDecimal amount) throws Exception {
-
+        //定义记录抢到红包时录入相关信息的实体对象，并设置响应字段的取值
+        RedRobRecord redRobRecord = new RedRobRecord();
+        redRobRecord.setUserId(userId);
+        redRobRecord.setRedPacket(redId);
+        redRobRecord.setAmount(amount);
+        redRobRecord.setRobTime(new Date());
+        //将实体对象信息插入数据库中
+        redRobRecordMapper.insertSelective(redRobRecord);
     }
 }
