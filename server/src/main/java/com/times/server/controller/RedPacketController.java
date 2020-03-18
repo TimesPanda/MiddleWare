@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 public class RedPacketController {
     private static final Logger logger = LoggerFactory.getLogger(RedPacketController.class);
@@ -56,6 +58,18 @@ public class RedPacketController {
     public BaseResponse rob(@RequestParam Integer userId,@RequestParam String redId){
         //定义响应对象
         BaseResponse response = new BaseResponse(StatusCode.Success);
+        try{
+            //调用红包业务逻辑处理接口中的抢红包方法，最终返回抢到的红包金额，单位为：元（不为null时表示抢到，否则抢完）
+            BigDecimal result = redPacketService.rob(userId,redId);
+            if(result != null){
+                response.setData(result);
+            }else{
+                response = new BaseResponse(StatusCode.Fail.getCode(),"红包已经被抢完");
+            }
+        }catch(Exception e){
+            logger.error("抢红包发生异常：userId={} redId={}",userId,redId,e.fillInStackTrace());
+            response = new BaseResponse(StatusCode.Fail.getCode(),e.getMessage());
+        }
         return response;
     }
 }
